@@ -4,70 +4,57 @@ const resultDiv = document.getElementById('result');
 const restartBtn = document.getElementById('restart');
 let juegoPlay = false;
 
-function numeroAleatorio(){
-    const numero = Math.floor(Math.random() * 3)+1;
-    console.log('El numeor generado es:', numero);
-    return numero;
+function numeroAleatorio() {
+  return Math.floor(Math.random() * 3) + 1;
 }
 
-function cuentaAtras(){
-    return new Promise((resolve) => {
-        let tiempo = 5;
-        countdownDiv.textContent = tiempo;
-        console.log('Cuenta atrás en:', tiempo);
+function cuentaAtras() {
+  return new Promise((resolve) => {
+    let tiempo = 5;
+    countdownDiv.textContent = tiempo;
 
-    const interval = setInterval (() => {
-        tiempo--;
-        countdownDiv.textContent=tiempo;
-        console.log('Tiempo restante:', tiempo);
+    const interval = setInterval(() => {
+      tiempo--;
+      countdownDiv.textContent = tiempo;
 
-        if (tiempo===0){
-            clearInterval(interval);
-            const numeroSecreto = numeroAleatorio();
-            console.log('Fin de la cienta atrás', numeroSecreto);
-            resolve(numeroSecreto);
-        }
+      if (tiempo === 0) {
+        clearInterval(interval);
+        const numeroSecreto = numeroAleatorio();
+        resolve(numeroSecreto);
+      }
     }, 1000);
-    });
+  });
 }
 
-function iniciarJuego(){
-    if(juegoPlay) {
-        console.log('El juego ha empezado');
-        return;
-    }
-    const valorUsuario = Number(inputNumero.value);
-    console.log('Numero elegido:', valorUsuario);
-    
+function iniciarJuego() {
+  if (juegoPlay) return;
 
-    if (valorUsuario <1 || valorUsuario > 3 || isNaN(valorUsuario)) {
-        resultDiv.textContent = 'Intro un numero del 1 al 3';
-        return;
-    }
+  const valorUsuario = Number(inputNumero.value);
 
-juegoPlay = true;
-inputNumero.disabled = true;
-resultDiv.textContent = 'La bomba está activada tienes 5s egundos.';
-countdownDiv.textContent = '5';
+  if (valorUsuario < 1 || valorUsuario > 3 || isNaN(valorUsuario)) {
+    resultDiv.textContent = 'Introduce un número del 1 al 3';
+    return;
+  }
 
-cuentaAtras().then ((numeroSecreto) => {
-    console.log('Comprobando resultado');
+  juegoPlay = true;
+  inputNumero.disabled = true;
+  resultDiv.textContent = 'La bomba está activada, tienes 5 segundos.';
 
+  cuentaAtras().then((numeroSecreto) => {
     if (valorUsuario === numeroSecreto) {
-        resultDiv.textContent= `🥳 has salvado el mundo eleigiendo el ${valorUsuario}.`;
-    }else {
-        resultDiv.textContent = `💥 la bomba ha explotado. El
- numero secreto era ${numeroSecreto}.`;
-   }
-});
+      resultDiv.textContent = `🥳 Has salvado el mundo eligiendo el ${valorUsuario}. El número secreto era ${numeroSecreto}.`;
+    } else {
+      resultDiv.textContent = `💥 La bomba ha explotado. Tú elegiste ${valorUsuario} y el número secreto era ${numeroSecreto}.`;
+    }
+  });
 }
 
 inputNumero.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter'){
-        iniciarJuego();
-    }
+  if (event.key === 'Enter') {
+    iniciarJuego();
+  }
 });
 
-restartBtn.addEventListener('click', () =>{
-    location.reload();
+restartBtn.addEventListener('click', () => {
+  location.reload();
 });
